@@ -27,12 +27,12 @@
 #include "rfquack_common.h"
 
 void printTimestamp(Print *_logOutput) {
-  char c[20];
-  sprintf(c, "[RFQK] %10lu ", millis());
+  char c[30];
+  sprintf(c, "<[RFQK] %10lu ", millis());
   _logOutput->print(c);
 }
 
-void printNewline(Print *_logOutput) { _logOutput->print('\n'); }
+void printNewline(Print *_logOutput) { _logOutput->print('\n'); _logOutput->print('\0'); }
 
 /*
  * If the board has extra hardware serials in addition to the default hardware
