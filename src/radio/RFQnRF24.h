@@ -124,7 +124,7 @@ public:
     }
 
     int16_t setBitRate(float br) override {
-      return(nRF24::setDataRate(br));
+      return(nRF24::setBitRate(br));
     }
     
     int16_t getBitRate(float &br) override {

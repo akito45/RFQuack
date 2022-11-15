@@ -117,13 +117,7 @@ public:
     }
 
     int16_t getFrequencyDeviation(float &freqDev) override {
-      if (RF69::_ook) {
-        freqDev = 0.0;
-      } else {
-        freqDev = RF69::_freqDev;
-      }
-
-      return RADIOLIB_ERR_NONE;
+      return RF69::getFrequencyDeviation(&freqDev);
     }
 
     // TODO implement setAutoAck for RFM69

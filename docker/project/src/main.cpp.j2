@@ -56,7 +56,8 @@ RadioB radioB = new Module({{ RADIOB_CS }}, {{ RADIOB_IRQ|default('RADIOLIB_NC')
 // Optionally add RadioC.
 #define USE_RADIOC
 typedef RFQ{{ RADIOC }} RadioC;
-RadioC radioB = new Module({{ RADIOC_CS|default('RADIOLIB_NC') }}, {{ RADIOC_IRQ|default('RADIOLIB_NC') }}, {{ RADIOC_CE|default('RADIOLIB_NC') }}); // CS, IRQ, CE
+RadioC radioC = new Module({{ RADIOC_CS }}, {{ RADIOC_IRQ|default('RADIOLIB_NC') }}, {{ RADIOC_CE|default('RADIOLIB_NC') }}, {{ RADIOC_GP|default('RADIOLIB_NC') }} , SPIH, spiSettings); // CS, IRQ, CE
+//RadioC radioB = new Module({{ RADIOC_CS|default('RADIOLIB_NC') }}, {{ RADIOC_IRQ|default('RADIOLIB_NC') }}, {{ RADIOC_CE|default('RADIOLIB_NC') }}); // CS, IRQ, CE
 {% endif %}
 {% if RADIOD is defined %}
 // Optionally add RadioD.

@@ -169,13 +169,7 @@ public:
     }
 
     int16_t getFrequencyDeviation(float &freqDev) override {
-      if (CC1101::_modulation == RADIOLIB_CC1101_MOD_FORMAT_ASK_OOK) {
-        // In OOK frequency deviation is zero
-        freqDev = 0.0;
-      } else {
-        freqDev = CC1101::_freqDev;
-      }
-      return RADIOLIB_ERR_NONE;
+      return CC1101::getFrequencyDeviation(&freqDev);
     }
 
     int16_t setModulation(rfquack_Modulation modulation) override {
@@ -274,6 +268,10 @@ public:
     int16_t setFrequency(float freq) override {
       CC1101::setFrequency(freq);
       return RADIOLIB_ERR_NONE;
+    }
+
+    int16_t setBitRate(float bitrate) override {
+      return CC1101::setBitRate(bitrate);
     }
 
     size_t getPacketLength(bool update) override {
