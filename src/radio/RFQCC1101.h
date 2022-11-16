@@ -17,6 +17,9 @@ public:
     using CC1101::setCrcFiltering;
     using CC1101::setRxBandwidth;
     using CC1101::setBitRate;
+    using CC1101::setFrequencyDeviation;
+    using CC1101::getFrequencyDeviation;
+    using CC1101::setFrequency;
 
     RFQCC1101(Module *module) : RadioLibWrapper(module, "CC1101") {}
 
@@ -79,17 +82,17 @@ public:
       return state;
     }
     
-    int16_t getSyncWord(uint8_t *bytes, pb_size_t &size) override {
+    int16_t getSyncWord(uint8_t *bytes, pb_size_t *size) override {
       if (CC1101::_promiscuous) {
         size = 2;
         bytes[0] = _syncWords[0];
         bytes[1] = _syncWords[1];
         // No sync words when in promiscuous mode.
-        //size = 0;
+        size = 2;
         return RADIOLIB_ERR_NONE;
       } else {
-        size = CC1101::_syncWordLength;
-        memcpy(bytes, _syncWords, size);
+        *size = CC1101::_syncWordLength;
+        memcpy(bytes, _syncWords, (size_t)*size);
       }
       return RADIOLIB_ERR_NONE;
     }
@@ -230,15 +233,16 @@ public:
       return RADIOLIB_ERR_NONE;
     }
 
-    float getRSSI(float &rssi) override {
+    float getRSSI(float *rssi) override {
       CC1101::_rawRSSI = SPIreadRegister(RADIOLIB_CC1101_REG_RSSI);
-      rssi = CC1101::getRSSI();
+      *rssi = CC1101::getRSSI();
+
       return RADIOLIB_ERR_NONE;
     }
 
-    int16_t isCarrierDetected(bool &isDetected) override {
+    int16_t isCarrierDetected(bool *isDetected) override {
       uint8_t pktStatus = SPIreadRegister(RADIOLIB_CC1101_REG_PKTSTATUS);
-      isDetected = pktStatus & 0x40;
+      *isDetected = (pktStatus & 0x40);
       return RADIOLIB_ERR_NONE;
     }
 
@@ -393,7 +397,7 @@ private:
     uint8_t _zerocount = 0;
     uint32_t _lastOneMs = 0;
     // Config variables not provided by RadioLib, initialised with default values
-    byte _syncWords[2] = {0xD3, 0x91};
+    byte _syncWords[RADIOLIB_CC1101_DEFAULT_SW_LEN] = RADIOLIB_CC1101_DEFAULT_SW;
 };
 
 

@@ -63,13 +63,13 @@ RadioC radioC = new Module({{ RADIOC_CS }}, {{ RADIOC_IRQ|default('RADIOLIB_NC')
 // Optionally add RadioD.
 #define USE_RADIOD
 typedef RFQ{{ RADIOD }} RadioD;
-RadioD radioB = new Module({{ RADIOD_CS|default('RADIOLIB_NC') }}, {{ RADIOD_IRQ|default('RADIOLIB_NC') }}, {{ RADIOD_CE|default('RADIOLIB_NC') }}); // CS, IRQ, CE
+RadioD radioD = new Module({{ RADIOD_CS|default('RADIOLIB_NC') }}, {{ RADIOD_IRQ|default('RADIOLIB_NC') }}, {{ RADIOD_CE|default('RADIOLIB_NC') }}); // CS, IRQ, CE
 {% endif %}
 {% if RADIOE is defined %}
 // Optionally add RadioE.
 #define USE_RADIOE
 typedef RFQ{{ RADIOE }} RadioE;
-RadioE radioB = new Module({{ RADIOE_CS|default('RADIOLIB_NC') }}, {{ RADIOE_IRQ|default('RADIOLIB_NC') }}, {{ RADIOE_CE|default('RADIOLIB_NC') }}); // CS, IRQ, CE
+RadioE radioE = new Module({{ RADIOE_CS|default('RADIOLIB_NC') }}, {{ RADIOE_IRQ|default('RADIOLIB_NC') }}, {{ RADIOE_CE|default('RADIOLIB_NC') }}); // CS, IRQ, CE
 {% endif %}
 
 /*****************************************************************************
@@ -85,8 +85,10 @@ void setup() {
   digitalWrite({{ RADIOA_CS }}, 1);
   rfquack_setup(
    &radioA
-   {{ ', &radioB' if RADIOB is defined }}  {{ ', &radioC' if RADIOC is defined }}
-   {{ ', &radioD' if RADIOD is defined }}  {{ ', &radioE' if RADIOE is defined }}
+   {{ ', &radioB' if RADIOB is defined }}
+   {{ ', &radioC' if RADIOC is defined }}
+   {{ ', &radioD' if RADIOD is defined }}
+   {{ ', &radioE' if RADIOE is defined }}
    );
 }
 
