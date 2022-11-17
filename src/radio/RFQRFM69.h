@@ -117,9 +117,7 @@ public:
       return ERR_COMMAND_NOT_IMPLEMENTED;
     }
 
-    int16_t getFrequencyDeviation(float &freqDev) override {
-      return RF69::getFrequencyDeviation(&freqDev);
-    }
+
 
     // TODO implement setAutoAck for RFM69
     int16_t setAutoAck(bool autoAckOn) override {

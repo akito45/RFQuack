@@ -84,11 +84,10 @@ public:
     
     int16_t getSyncWord(uint8_t *bytes, pb_size_t *size) override {
       if (CC1101::_promiscuous) {
-        size = 2;
         bytes[0] = _syncWords[0];
         bytes[1] = _syncWords[1];
         // No sync words when in promiscuous mode.
-        size = 2;
+        *size = 2;
         return RADIOLIB_ERR_NONE;
       } else {
         *size = CC1101::_syncWordLength;
@@ -171,9 +170,7 @@ public:
       return CC1101::readData(data, len);
     }
 
-    int16_t getFrequencyDeviation(float &freqDev) override {
-      return CC1101::getFrequencyDeviation(&freqDev);
-    }
+    
 
     int16_t setModulation(rfquack_Modulation modulation) override {
        RFQUACK_LOG_TRACE(F("setting modulation %d"), modulation)
