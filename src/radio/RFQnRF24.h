@@ -10,7 +10,9 @@ public:
 
     int16_t begin() override {
       int16_t state = RadioLibWrapper::begin();
-
+      if (_mod->getIrq() != RADIOLIB_NC) {
+        pinMode(_mod->getIrq(), INPUT_PULLDOWN);
+      }
       return state;
     }
 
@@ -25,12 +27,18 @@ public:
 
     bool isTxChannelFree() override {
       // Check if max number of retransmits has occurred.
+
+      if (true) {//TODO: add ifdef here
+        return _mod->SPIgetRegValue(RADIOLIB_NRF24_REG_FIFO_STATUS) & RADIOLIB_NRF24_TX_FIFO_EMPTY_FLAG;
+      }
+
       if (nRF24::getStatus(RADIOLIB_NRF24_MAX_RT)) {
         nRF24::standby();
         nRF24::clearIRQ();
         RFQUACK_LOG_TRACE(F("No ACK received from previous TX. Abort TX."))
         return true;
       }
+
 
       // Call to base method.
       return RadioLibWrapper::isTxChannelFree();
@@ -198,12 +206,35 @@ public:
 
     void removeInterrupts() override {
       nRF24::clearIRQ();
-      detachInterrupt(digitalPinToInterrupt(_mod->getIrq()));
+      if (_mod->getIrq() != RADIOLIB_NC) {
+        detachInterrupt(digitalPinToInterrupt(_mod->getIrq()));
+      }
     }
 
     void setInterruptAction(void (*func)(void *)) override {
-      attachInterruptArg(digitalPinToInterrupt(_mod->getIrq()), func, (void *) (&_flag), FALLING);
+      if (_mod->getIrq() != RADIOLIB_NC) {
+        attachInterruptArg(digitalPinToInterrupt(_mod->getIrq()), func, (void *) (&_flag), FALLING);
+      }
     }
+    bool isIncomingDataAvailable() override {
+      //return _mod->SPIgetRegValue(RADIOLIB_NRF24_REG_STATUS) & RADIOLIB_NRF24_RX_DR;
+      return nRF24::getStatus(RADIOLIB_NRF24_RX_DR);
+      
+    }
+    //FIXME: nrf24 does not have a RSSI register, but this could be emulated with carrier detect 
+    float getRSSI(float *rssi) override {
+      *rssi = -100;
+      return RADIOLIB_ERR_NONE;
+    }
+    //FIXME nrf24 has a freq dev. Have to check the datasheet
+    int16_t getFrequencyDeviation(float *freqDev) override {
+      *freqDev = 0;
+      return RADIOLIB_ERR_NONE;
+    }
+
+   
+
+
 private:
     // Config variables not provided by RadioLib, initialised with default values
     byte _addr[5] = {0x01, 0x23, 0x45, 0x67, 0x89}; // Cannot be > 5 bytes. Default len is 5.
